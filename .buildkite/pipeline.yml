@@ -14,7 +14,7 @@ common:
   -  docker-compose_plugin: &docker-compose
       docker-compose#v5.2.0:
         config: .buildkite/docker-compose.yaml
-        run: node
+        run: ruby
         tty: true
         mount-buildkite-agent: true
 

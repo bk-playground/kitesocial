@@ -1,0 +1,31 @@
+FROM docker.io/buildkite/hosted-agent-base:ubuntu-v1.0.1@sha256:f1378abd34fccb2b7b661aaf3b06394509a4f7b5bb8c2f8ad431e7eaa1cabc9c
+RUN apt-get update && apt-get install -y \
+  git \
+  curl \
+  autoconf \
+  bison \
+  build-essential \
+  libssl-dev \
+  libyaml-dev \
+  libreadline6-dev \
+  zlib1g-dev \
+  libncurses5-dev \
+  libffi-dev \
+  libgdbm6 \
+  libgdbm-dev \
+  libdb-dev
+
+# Install rbenv and ruby-build
+RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
+
+# Add rbenv to PATH and initialize
+ENV PATH="/root/.rbenv/bin:/root/.rbenv/shims:$PATH"
+ENV RBENV_ROOT="/root/.rbenv"
+ENV CONFIGURE_OPTS="--disable-install-doc"
+RUN echo 'eval "$(rbenv init -)"' >> ~/.bashrc
+
+# Install Ruby and Bundler
+SHELL ["/bin/bash", "-l", "-c"]
+RUN rbenv install 3.4.1 && \
+    rbenv global 3.4.1 && \
+    gem install bundler

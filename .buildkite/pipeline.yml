@@ -18,20 +18,22 @@ common:
         tty: true
         mount-buildkite-agent: true
 
+env:
+  BUNDLE_FROZEN: true # Don't allow lockfile to mutate during CI
+  BUNDLE_DEPLOYMENT: true # Automatically install gems to vendor/bundle
+
 steps:
   - group: "Without Buildkite Cache"
     steps:
       - label: ":rubygems: :rspec: Run system specs"
         command:
-          - "bundle config --local path vendor/bundle"
-          - "bundle install --frozen"
+          - "bundle install --quiet"
           - "bundle exec rspec spec/system"
         plugins:
           - *docker-compose
       - label: ":rubygems: :rspec: Run model specs"
         command:
-          - "bundle config --local path vendor/bundle"
-          - "bundle install --frozen"
+          - "bundle install --quiet"
           - "bundle exec rspec spec/models"
         plugins:
           - *docker-compose
@@ -40,8 +42,7 @@ steps:
       - label: ":rubygems: Install dependencies"
         key: "install_dependencies"
         command:
-          - "bundle config --local path vendor/bundle"
-          - "bundle install --frozen"
+          - "bundle install --quiet"
         plugins:
           - *docker-compose
           - *aws-assume-role

@@ -24,14 +24,14 @@ steps:
       - label: ":rubygems: :rspec: Run system specs"
         command:
           - "bundle config --local path vendor/bundle"
-          - "bundle install"
+          - "bundle install --frozen"
           - "bundle exec rspec spec/system"
         plugins:
           - *docker-compose
       - label: ":rubygems: :rspec: Run model specs"
         command:
           - "bundle config --local path vendor/bundle"
-          - "bundle install"
+          - "bundle install --frozen"
           - "bundle exec rspec spec/models"
         plugins:
           - *docker-compose
@@ -41,7 +41,7 @@ steps:
         key: "install_dependencies"
         command:
           - "bundle config --local path vendor/bundle"
-          - "bundle install"
+          - "bundle install --frozen"
         plugins:
           - *docker-compose
           - *aws-assume-role

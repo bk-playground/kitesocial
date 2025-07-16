@@ -3,8 +3,8 @@ common:
       aws-assume-role-with-web-identity#v1.1.0:
         role-arn: ${CACHE_ROLE}
   - zipstash_pkg_plugin: &zstash-ruby
-      .buildkite/plugins/zstash:
-        id: "node"
+      - buildkite/zstash#v0.1.0:
+        id: "ruby"
         key: '{{ id }}-{{ agent.os }}-{{ agent.arch }}-{{ checksum "Gemfile.lock" }}'
         fallback_keys: |
           {{ id }}-{{ agent.os }}-{{ agent.arch }}-

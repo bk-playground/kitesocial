@@ -18,9 +18,6 @@ common:
         tty: true
         mount-buildkite-agent: true
 
-agents:
-  queue: "mitch-ecs"
-
 steps:
   - group: "Without Buildkite Cache"
     steps:

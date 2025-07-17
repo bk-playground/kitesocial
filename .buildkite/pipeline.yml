@@ -32,7 +32,10 @@ steps:
           - *docker-compose
       - label: ":rubygems: :rspec: Run model specs"
         command:
-          - "bundle install --frozen --quiet --path vendor/bundle"
+          - "bundle config --local path vendor/bundle"
+          - "bundle config --local frozen true"
+          - "bundle config --local quiet true"
+          - "bundle install"
           - "bundle exec rspec spec/models"
         plugins:
           - *docker-compose
@@ -41,13 +44,18 @@ steps:
       - label: ":rubygems: Install dependencies"
         key: "install_dependencies"
         command:
-          - "bundle install --frozen --quiet --path vendor/bundle"
+          - "bundle config --local path vendor/bundle"
+          - "bundle config --local frozen true"
+          - "bundle config --local quiet true"
+          - "bundle install"
         plugins:
           - *docker-compose
           - *aws-assume-role
           - *zstash-ruby
       - label: ":rspec: Run system specs"
-        command: "bundle exec rspec spec/system"
+        command:
+          - "bundle config --local path vendor/bundle"
+          - "bundle exec rspec spec/system"
         depends_on:
           - "install_dependencies"
         plugins:
@@ -55,7 +63,9 @@ steps:
           - *aws-assume-role
           - *zstash-ruby
       - label: ":rspec: Run model specs"
-        command: "bundle exec rspec spec/models"
+        command:
+          - "bundle config --local path vendor/bundle"
+          - "bundle exec rspec spec/models"
         depends_on:
           - "install_dependencies"
         plugins:

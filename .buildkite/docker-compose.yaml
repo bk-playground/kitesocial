@@ -1,0 +1,8 @@
+services:
+  ruby:
+    build:
+      context: .
+      dockerfile: Dockerfile.build
+    working_dir: /app
+    volumes:
+      - ..:/app:cached

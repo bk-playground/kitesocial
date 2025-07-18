@@ -11,17 +11,47 @@ common:
         paths: |
           vendor/bundle
         bucket-url: $BUCKET_URL
+  - zipstash_docker_plugin: &zstash-docker
+      buildkite/zstash#v0.1.0:
+        id: "docker"
+        key: '{{ id }}-{{ agent.os }}-{{ agent.arch }}-{{ checksum ".buildkite/Dockerfile.build" }}'
+        fallback_keys: |
+          {{ id }}-{{ agent.os }}-{{ agent.arch }}-
+        paths: |
+          vendor/containers
+        bucket-url: $BUCKET_URL
   -  docker-compose_plugin: &docker-compose
-      docker-compose#v5.2.0:
+      docker-compose#v5.10.0:
         config: .buildkite/docker-compose.yaml
         run: ruby
         tty: true
         mount-buildkite-agent: true
+  - docker-compose_plugin: &docker-compose-build
+      docker-compose#v5.10.0:
+        config: .buildkite/docker-compose.yaml
+        build: ruby
+        builder:
+          name: container
+          driver: docker-container
+          create: true
+          use: true
+        progress: plain
+        cache-from:
+          - "ruby:type=local,src=vendor/containers"
+        cache-to:
+          - "ruby:type=local,dest=vendor/containers"
 
 env:
   BUNDLE_FROZEN: true # Don't allow lockfile to mutate during CI
 
 steps:
+  - label: ":docker: Build base image"
+    key: "build_base_image"
+    plugins:
+      - *aws-assume-role
+      - *zstash-docker
+      - *docker-compose-build
+
   - group: "Without Buildkite Cache"
     steps:
       - label: ":rubygems: :rspec: Run system specs"
@@ -40,6 +70,8 @@ steps:
         plugins:
           - *docker-compose
   - group: "With Buildkite Cache"
+    depends_on:
+      - "build_base_image"
     steps:
       - label: ":rubygems: Install dependencies"
         key: "install_dependencies"
@@ -49,8 +81,10 @@ steps:
           - "bundle config --local quiet true"
           - "bundle install"
         plugins:
+          - *docker-compose-build
           - *docker-compose
           - *aws-assume-role
+          - *zstash-docker
           - *zstash-ruby
       - label: ":rspec: Run system specs"
         command:
@@ -59,8 +93,10 @@ steps:
         depends_on:
           - "install_dependencies"
         plugins:
+          - *docker-compose-build
           - *docker-compose
           - *aws-assume-role
+          - *zstash-docker
           - *zstash-ruby
       - label: ":rspec: Run model specs"
         command:
@@ -69,6 +105,8 @@ steps:
         depends_on:
           - "install_dependencies"
         plugins:
+          - *docker-compose-build
           - *docker-compose
           - *aws-assume-role
+          - *zstash-docker
           - *zstash-ruby

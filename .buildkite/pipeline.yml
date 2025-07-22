@@ -37,9 +37,9 @@ common:
           use: true
         progress: plain
         cache-from:
-          - "ruby:type=local,src=vendor/containers"
+          - "ruby:type=local,src=vendor/containers,compression=uncompressed"
         cache-to:
-          - "ruby:type=local,dest=vendor/containers.compression=uncompressed"
+          - "ruby:type=local,dest=vendor/containers,compression=uncompressed"
 
 env:
   BUNDLE_FROZEN: true # Don't allow lockfile to mutate during CI

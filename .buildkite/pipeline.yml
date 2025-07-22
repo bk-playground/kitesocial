@@ -45,13 +45,6 @@ env:
   BUNDLE_FROZEN: true # Don't allow lockfile to mutate during CI
 
 steps:
-  - label: ":docker: Build base image"
-    key: "build_base_image"
-    plugins:
-      - *aws-assume-role
-      - *zstash-docker
-      - *docker-compose-build
-
   - group: "Without Buildkite Cache"
     steps:
       - label: ":rubygems: :rspec: Run system specs"
@@ -70,11 +63,17 @@ steps:
         plugins:
           - *docker-compose
   - group: "With Buildkite Cache"
-    depends_on:
-      - "build_base_image"
     steps:
+      - label: ":docker: Build base image"
+        key: "build_base_image"
+        plugins:
+          - *aws-assume-role
+          - *zstash-docker
+          - *docker-compose-build
       - label: ":rubygems: Install dependencies"
         key: "install_dependencies"
+        depends_on:
+          - "build_base_image"
         command:
           - "bundle config --local path vendor/bundle"
           - "bundle config --local frozen true"

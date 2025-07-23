@@ -4,7 +4,7 @@ agents:
 common:
   - zipstash_pkg_plugin: &zstash-ruby
       buildkite/zstash#main:
-        id: "ruby"
+        id: "ruby-nsc"
         key: '{{ id }}-{{ agent.os }}-{{ agent.arch }}-{{ checksum "Gemfile.lock" }}'
         fallback_keys: |
           {{ id }}-{{ agent.os }}-{{ agent.arch }}-

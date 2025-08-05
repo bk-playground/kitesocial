@@ -2,16 +2,10 @@ agents:
   queue: nsc-artifact-storage
 
 common:
-  - zipstash_pkg_plugin: &zstash-ruby
-      buildkite/zstash#main:
-        id: "ruby-nsc"
-        key: '{{ id }}-{{ agent.os }}-{{ agent.arch }}-{{ checksum "Gemfile.lock" }}'
-        fallback_keys: |
-          {{ id }}-{{ agent.os }}-{{ agent.arch }}-
-        paths: |
-          vendor/bundle
-        bucket-url: $BUCKET_URL
-        store: "nsc"
+  - buildkite_cache_ruby: &zstash-ruby
+      "buildkite/zstash#main":
+        config: ".buildkite/cache.yml"
+        ids: "ruby"
 
 env:
   BUNDLE_FROZEN: true # Don't allow lockfile to mutate during CI

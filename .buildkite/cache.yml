@@ -1,0 +1,11 @@
+caches:
+  - id: "ruby"
+    key: "{{ id }}-{{ agent.os }}-{{ agent.arch }}-{{ checksum 'Gemfile.lock' }}"
+    fallback_keys: "{{ id }}-{{ agent.os }}-{{ agent.arch }}-"
+    paths: "vendor/bundle"
+    bucket-url: $BUCKET_URL
+  - id: "docker"
+    key: "{{ id }}-{{ agent.os }}-{{ agent.arch }}-{{ checksum 'buildkite/Dockerfile.build' }}"
+    fallback_keys: "{{ id }}-{{ agent.os }}-{{ agent.arch }}-"
+    paths: "vendor/containers"
+    bucket-url: $BUCKET_URL

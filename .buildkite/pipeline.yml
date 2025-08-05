@@ -2,14 +2,14 @@ common:
   - aws-assume-role_plugin: &aws-assume-role
       aws-assume-role-with-web-identity#v1.1.0:
         role-arn: ${CACHE_ROLE}
-  - buildkite_cache_ruby: &zstash-ruby
-      "buildkite/zstash#main":
-        config: ".buildkite/cache.yml"
-        ids: "ruby"
   - buildkite_cache_docker: &zstash-docker
       "buildkite/zstash#main":
         config: ".buildkite/cache.yml"
         ids: "docker"
+  - buildkite_cache_docker_and_ruby: &zstash-docker-and-ruby
+      "buildkite/zstash#main":
+        config: ".buildkite/cache.yml"
+        ids: "docker,ruby"
   -  docker-compose_plugin: &docker-compose
       docker-compose#v5.10.0:
         config: .buildkite/docker-compose.yaml
@@ -73,8 +73,7 @@ steps:
           - *docker-compose-build
           - *docker-compose
           - *aws-assume-role
-          - *zstash-docker
-          - *zstash-ruby
+          - *zstash-docker-and-ruby
       - label: ":rspec: Run system specs"
         command:
           - "bundle config --local path vendor/bundle"
@@ -85,8 +84,7 @@ steps:
           - *docker-compose-build
           - *docker-compose
           - *aws-assume-role
-          - *zstash-docker
-          - *zstash-ruby
+          - *zstash-docker-and-ruby
       - label: ":rspec: Run model specs"
         command:
           - "bundle config --local path vendor/bundle"
@@ -97,5 +95,4 @@ steps:
           - *docker-compose-build
           - *docker-compose
           - *aws-assume-role
-          - *zstash-docker
-          - *zstash-ruby
+          - *zstash-docker-and-ruby

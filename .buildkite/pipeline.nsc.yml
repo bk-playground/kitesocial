@@ -3,9 +3,9 @@ agents:
 
 common:
   - buildkite_cache_ruby: &zstash-ruby
-      "buildkite/zstash#main":
-        config: ".buildkite/cache.yml"
-        ids: "ruby"
+      "improbable-eng/metahook#v0.4.1":
+        pre-command: "zstash restore --ids ruby"
+        post-command: "zstash save --ids ruby"
 
 env:
   BUNDLE_FROZEN: true # Don't allow lockfile to mutate during CI

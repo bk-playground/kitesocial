@@ -3,13 +3,13 @@ common:
       aws-assume-role-with-web-identity#v1.1.0:
         role-arn: ${CACHE_ROLE}
   - buildkite_cache_docker: &zstash-docker
-      "buildkite/zstash#main":
-        config: ".buildkite/cache.yml"
-        ids: "docker"
+      "improbable-eng/metahook#v0.4.1":
+        pre-command: "zstash restore --ids docker"
+        post-command: "zstash save --ids docker"
   - buildkite_cache_docker_and_ruby: &zstash-docker-and-ruby
-      "buildkite/zstash#main":
-        config: ".buildkite/cache.yml"
-        ids: "docker,ruby"
+      "improbable-eng/metahook#v0.4.1":
+        pre-command: "zstash restore --ids docker,ruby"
+        post-command: "zstash save --ids docker,ruby"
   -  docker-compose_plugin: &docker-compose
       docker-compose#v5.10.0:
         config: .buildkite/docker-compose.yaml

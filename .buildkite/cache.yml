@@ -1,0 +1,7 @@
+caches:
+  - id: "ruby"
+    template: "ruby"
+  - id: "docker"
+    key: '{{ id }}-{{ agent.os }}-{{ agent.arch }}-{{ checksum ".buildkite/Dockerfile.build" }}'
+    fallback_keys: ["{{ id }}-{{ agent.os }}-{{ agent.arch }}-"]
+    paths: ["vendor/containers"]

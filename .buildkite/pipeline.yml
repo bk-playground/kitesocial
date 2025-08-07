@@ -2,24 +2,12 @@ common:
   - aws-assume-role_plugin: &aws-assume-role
       aws-assume-role-with-web-identity#v1.1.0:
         role-arn: ${CACHE_ROLE}
-  - zipstash_pkg_plugin: &zstash-ruby
-      buildkite/zstash#v0.1.0:
-        id: "ruby"
-        key: '{{ id }}-{{ agent.os }}-{{ agent.arch }}-{{ checksum "Gemfile.lock" }}'
-        fallback_keys: |
-          {{ id }}-{{ agent.os }}-{{ agent.arch }}-
-        paths: |
-          vendor/bundle
-        bucket-url: $BUCKET_URL
-  - zipstash_docker_plugin: &zstash-docker
-      buildkite/zstash#v0.1.0:
-        id: "docker"
-        key: '{{ id }}-{{ agent.os }}-{{ agent.arch }}-{{ checksum ".buildkite/Dockerfile.build" }}'
-        fallback_keys: |
-          {{ id }}-{{ agent.os }}-{{ agent.arch }}-
-        paths: |
-          vendor/containers
-        bucket-url: $BUCKET_URL
+  - buildkite_cache_ruby: &buildkite-cache-ruby-and-docker
+      "buildkite/zstash":
+        ids: "ruby,docker"
+  - buildkite_cache_docker: &buildkite-cache-docker
+      "buildkite/zstash":
+        ids: "docker"
   -  docker-compose_plugin: &docker-compose
       docker-compose#v5.10.0:
         config: .buildkite/docker-compose.yaml
@@ -68,7 +56,7 @@ steps:
         key: "build_base_image"
         plugins:
           - *aws-assume-role
-          - *zstash-docker
+          - *buildkite-cache-docker
           - *docker-compose-build
       - label: ":rubygems: Install dependencies"
         key: "install_dependencies"
@@ -80,11 +68,10 @@ steps:
           - "bundle config --local quiet true"
           - "bundle install"
         plugins:
+          - *aws-assume-role
+          - *buildkite-cache-ruby-and-docker
           - *docker-compose-build
           - *docker-compose
-          - *aws-assume-role
-          - *zstash-docker
-          - *zstash-ruby
       - label: ":rspec: Run system specs"
         command:
           - "bundle config --local path vendor/bundle"
@@ -92,11 +79,10 @@ steps:
         depends_on:
           - "install_dependencies"
         plugins:
+          - *aws-assume-role
+          - *buildkite-cache-ruby-and-docker
           - *docker-compose-build
           - *docker-compose
-          - *aws-assume-role
-          - *zstash-docker
-          - *zstash-ruby
       - label: ":rspec: Run model specs"
         command:
           - "bundle config --local path vendor/bundle"
@@ -104,8 +90,7 @@ steps:
         depends_on:
           - "install_dependencies"
         plugins:
+          - *aws-assume-role
+          - *buildkite-cache-ruby-and-docker
           - *docker-compose-build
           - *docker-compose
-          - *aws-assume-role
-          - *zstash-docker
-          - *zstash-ruby

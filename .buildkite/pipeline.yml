@@ -4,11 +4,11 @@ common:
         role-arn: ${CACHE_ROLE}
   - buildkite_cache_ruby: &buildkite-cache-ruby-and-docker
       "buildkite/zstash":
-        ids: "ruby-1,docker-1"
+        ids: "ruby_1,docker_1"
         config: ".buildkite/cache.elastic.yml"
   - buildkite_cache_docker: &buildkite-cache-docker
       "buildkite/zstash":
-        ids: "docker-1"
+        ids: "docker_1"
         config: ".buildkite/cache.elastic.yml"
   -  docker-compose_plugin: &docker-compose
       docker-compose#v5.10.0:

@@ -1,8 +1,8 @@
 caches:
-  - id: "ruby"
+  - id: "ruby-1"
     template: "ruby"
     registry: "elastic-stack"
-  - id: "docker"
+  - id: "docker-1"
     registry: "elastic-stack"
     key: '{{ id }}-{{ agent.os }}-{{ agent.arch }}-{{ checksum ".buildkite/Dockerfile.build" }}'
     fallback_keys: ["{{ id }}-{{ agent.os }}-{{ agent.arch }}-"]

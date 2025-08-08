@@ -4,7 +4,7 @@ agents:
 common:
   - buildkite_cache: &buildkite-cache
       "buildkite/zstash":
-        ids: "ruby"
+        ids: "ruby-1"
         config: ".buildkite/cache.hosted.yml"
 
 env:

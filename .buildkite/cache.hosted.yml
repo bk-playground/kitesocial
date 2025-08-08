@@ -1,7 +1,9 @@
 caches:
   - id: "ruby"
     template: "ruby"
+    registry: "hosted-agents"
   - id: "docker"
+    registry: "hosted-agents"
     key: '{{ id }}-{{ agent.os }}-{{ agent.arch }}-{{ checksum ".buildkite/Dockerfile.build" }}'
     fallback_keys: ["{{ id }}-{{ agent.os }}-{{ agent.arch }}-"]
     paths: ["vendor/containers"]

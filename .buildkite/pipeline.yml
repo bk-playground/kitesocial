@@ -5,9 +5,11 @@ common:
   - buildkite_cache_ruby: &buildkite-cache-ruby-and-docker
       "buildkite/zstash":
         ids: "ruby,docker"
+        config: ".buildkite/cache.elastic.yml"
   - buildkite_cache_docker: &buildkite-cache-docker
       "buildkite/zstash":
         ids: "docker"
+        config: ".buildkite/cache.elastic.yml"
   -  docker-compose_plugin: &docker-compose
       docker-compose#v5.10.0:
         config: .buildkite/docker-compose.yaml

@@ -4,7 +4,8 @@ agents:
 common:
   - buildkite_cache: &buildkite-cache
       "buildkite/zstash":
-        ids: "ruby"
+        ids: "ruby_1,docker_1"
+        config: ".buildkite/cache.hosted.yml"
 
 env:
   BUNDLE_FROZEN: true # Don't allow lockfile to mutate during CI

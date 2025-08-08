@@ -1,0 +1,9 @@
+caches:
+  - id: "ruby_1"
+    template: "ruby"
+    registry: "elastic-stack"
+  - id: "docker_1"
+    registry: "elastic-stack"
+    key: '{{ id }}-{{ agent.os }}-{{ agent.arch }}-{{ checksum ".buildkite/Dockerfile.build" }}'
+    fallback_keys: ["{{ id }}-{{ agent.os }}-{{ agent.arch }}-"]
+    paths: ["vendor/containers"]
